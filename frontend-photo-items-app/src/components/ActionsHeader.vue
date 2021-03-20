@@ -50,6 +50,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive } from "vue";
+import api from "@/utilities/api";
 import Item from "@/models/Item";
 
 export default defineComponent({
@@ -73,7 +74,14 @@ export default defineComponent({
 
 		async function fetchItems () {
 			state.items.push(Item.getNullSelectedItem());
-      //api call to get items
+
+			const dbItems = await api.get("items");
+
+      if (!dbItems) {
+        return;
+      }
+
+			state.items = state.items.concat(dbItems);
 		}
 
 		onMounted(() => {
