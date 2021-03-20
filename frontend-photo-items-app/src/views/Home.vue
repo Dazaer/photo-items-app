@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<h1>Rings display</h1>
+	<div class="container-fluid row">
+		<h1 class="col-md-2">Rings display</h1>
 	</div>
 </template>
 
