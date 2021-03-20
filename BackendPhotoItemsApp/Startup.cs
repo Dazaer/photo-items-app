@@ -19,22 +19,20 @@ namespace BackendPhotoItemsApp {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
+            services.AddCors(options => {
+                options.AddPolicy("EnableCORS", builder => {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
+                });
+            });
+
+            services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddDbContext<AppDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddCors(options => {
-                options.AddPolicy("EnableCORS", builder => {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
-
-                });
-            });
-
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            //services.AddScoped<IRepository<Item>, ItemRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
 
@@ -48,11 +46,11 @@ namespace BackendPhotoItemsApp {
                 app.UseHsts();
             }
 
+            app.UseCors("EnableCORS");
+
             app.UseHttpsRedirection();
 
             app.UseMvc();
-
-            app.UseCors("EnableCORS");
 
             app.UseAuthorization();
         }

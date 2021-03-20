@@ -3,6 +3,7 @@ using BackendPhotoItemsApp.Dtos;
 using BackendPhotoItemsApp.Models;
 using BackendPhotoItemsApp.Profiles;
 using BackendPhotoItemsApp.Repositories;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
