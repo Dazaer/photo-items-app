@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace BackendPhotoItemsApp.Models.Db
+namespace BackendPhotoItemsApp.Models
 {
     public partial class AppDbContext : DbContext
     {

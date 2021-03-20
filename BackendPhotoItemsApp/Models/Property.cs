@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace BackendPhotoItemsApp.Models.Db
+namespace BackendPhotoItemsApp.Models
 {
-    public partial class Type
+    public partial class Property
     {
-        public Type()
+        public Property()
         {
-            ItemPhotos = new HashSet<ItemPhoto>();
+            ItemPhotoPropertySets = new HashSet<ItemPhotoPropertySet>();
             TypePropertySets = new HashSet<TypePropertySet>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<ItemPhoto> ItemPhotos { get; set; }
+        public virtual ICollection<ItemPhotoPropertySet> ItemPhotoPropertySets { get; set; }
         public virtual ICollection<TypePropertySet> TypePropertySets { get; set; }
     }
 }

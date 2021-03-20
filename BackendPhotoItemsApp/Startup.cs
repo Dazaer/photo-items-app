@@ -1,4 +1,5 @@
-using MediaItemsApp.Models.Db;
+using BackendPhotoItemsApp.Models;
+using BackendPhotoItemsApp.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace BackendPhotoItemsApp {
     public class Startup {
@@ -20,6 +22,10 @@ namespace BackendPhotoItemsApp {
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
 
+            services.AddDbContext<AppDbContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
             services.AddCors(options => {
                 options.AddPolicy("EnableCORS", builder => {
                     builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().Build();
@@ -27,9 +33,9 @@ namespace BackendPhotoItemsApp {
                 });
             });
 
-            services.AddDbContext<AppDbContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            });
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            //services.AddScoped<IRepository<Item>, ItemRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace BackendPhotoItemsApp.Models.Db
+namespace BackendPhotoItemsApp.Models
 {
     public partial class ItemPhoto
     {
