@@ -1,3 +1,5 @@
+import PropertyType from "./virtual/PropertyType";
+
 export default class Property {
 
   public id: number = 0;
@@ -7,7 +9,7 @@ export default class Property {
     Object.assign(this, item);
   }
 
-  public static getNullSelectedProperty() {
-    return new Property({name: "All"});
+  public static getNullSelectedPropertyType<TEntity>() {
+    return new PropertyType<TEntity>({description: "All"});
   }
 }

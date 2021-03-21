@@ -23,8 +23,12 @@
 
 				<select v-model="state.selectedMetal"
 					:disabled="state.selectedItem.id === 0">
-					<option value="Rose gold">Rose gold</option>
-					<option value="Yellow gold">Yellow gold</option>
+					<option
+						v-for="(metalType) in state.metalTypes"
+						:key="metalType.id"
+						:value="metalType">
+						{{ metalType.description }}
+					</option>
 				</select>
 			</div>
 
@@ -33,8 +37,12 @@
 
 				<select v-model="state.selectedShape"
 					:disabled="state.selectedItem.id === 0">
-					<option value="Cushion">Cushion</option>
-					<option value="Round">Round</option>
+					<option
+						v-for="(shapeType) in state.shapeTypes"
+						:key="shapeType.id"
+						:value="shapeType">
+						{{ shapeType.description }}
+					</option>
 				</select>
 			</div>
 		</div>
@@ -57,6 +65,11 @@ import api from "@/utilities/api";
 import Item from "@/models/Item";
 import ItemPhoto from "@/models/ItemPhoto";
 import Property from "@/models/Property";
+import Metal from "@/models/virtual/Metal";
+import Shape from "@/models/virtual/Shape";
+import MetalType from "@/models/virtual/MetalType";
+import ShapeType from "@/models/virtual/ShapeType";
+import PropertyType from "@/models/virtual/PropertyType";
 
 export default defineComponent({
 	name: "ActionsHeader",
@@ -72,14 +85,16 @@ export default defineComponent({
 
 		const state = reactive({
 			selectedItem: Item.getNullSelectedItem(),
-			selectedMetal: Property.getNullSelectedProperty(),
-			selectedShape: Property.getNullSelectedProperty(),
+			selectedMetal: Property.getNullSelectedPropertyType<MetalType>(),
+			selectedShape: Property.getNullSelectedPropertyType<ShapeType>(),
 			items: Array<Item>(),
+			metalTypes: Array<PropertyType<MetalType>>(),
+			shapeTypes: Array<PropertyType<ShapeType>>(),
 		});
 
-    function itemChanged() {
-      ctx.emit("item-chosen", 1, state.selectedItem.id);
-    }
+		function itemChanged () {
+			ctx.emit("item-chosen", 1, state.selectedItem.id);
+		}
 
 		function addItem () {
 
@@ -98,15 +113,29 @@ export default defineComponent({
 
 			state.items = state.items.concat(dbItems);
 		}
+		function fetchMetalTypes () {
+			state.metalTypes.push(state.selectedMetal);
+			const metalTypes = MetalType.getMetalTypes();
+
+			state.metalTypes = state.metalTypes.concat(metalTypes);
+		}
+		function fetchShapeTypes () {
+			state.shapeTypes.push(state.selectedShape);
+			const shapeTypes = ShapeType.getShapeTypes();
+
+			state.shapeTypes = state.shapeTypes.concat(shapeTypes);
+		}
 
 		onMounted(() => {
 			fetchItems();
+			fetchMetalTypes();
+			fetchShapeTypes();
 		});
 
 		return {
 			state,
 			addItem,
-      itemChanged,
+			itemChanged,
 		}
 
 	},
