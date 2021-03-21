@@ -2,7 +2,7 @@
 	<div class="photos-container">
 
 		<div v-for="(itemPhoto) in itemPhotos" :key="itemPhoto.id" class="item-photo">
-			<img :src="itemPhoto.fileName" alt="photo not available" class="image">
+			<img :src="itemPhoto.fileName" :alt="itemPhoto.alt ?? 'Photo not available'" class="image">
 		</div>
 
 	</div>

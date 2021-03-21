@@ -8,7 +8,7 @@
 			<div class="p-1">
 				<div>Ring</div>
 
-				<select v-model="state.selectedItem">
+				<select v-model="state.selectedItem" @change="itemChanged()">
 					<option
 						v-for="(item) in state.items"
 						:key="item.id"
@@ -75,10 +75,11 @@ export default defineComponent({
 			selectedMetal: Property.getNullSelectedProperty(),
 			selectedShape: Property.getNullSelectedProperty(),
 			items: Array<Item>(),
-			itemPhotos: Array<ItemPhoto>(),
 		});
 
-		const itemPhotos = computed(() => state.itemPhotos);
+    function itemChanged() {
+      ctx.emit("item-chosen", 1, state.selectedItem.id);
+    }
 
 		function addItem () {
 
@@ -105,6 +106,7 @@ export default defineComponent({
 		return {
 			state,
 			addItem,
+      itemChanged,
 		}
 
 	},

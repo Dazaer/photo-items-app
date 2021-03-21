@@ -2,7 +2,7 @@
 	<div class="home-container">
 		<h1 class="title m-0 p-2" style="height: 5%">Rings display</h1>
 
-		<actions-header :item-photos="state.itemPhotos" style="height: 5%" />
+		<actions-header @item-chosen="fetchItemPhotos" :item-photos="state.itemPhotos" style="height: 5%" />
 
 		<div class="items-container py-2" style="height: 87%">
 			<photos-container :item-photos="state.itemPhotos" />
@@ -37,13 +37,14 @@ export default defineComponent({
 		});
 
 		async function fetchItemPhotos (typeId: number = 1, itemId?: number) {
-			const dbItemPhotos = await api.get(`itemphotos?typeId=${typeId}&itemId=${itemId}`);
+			const navigationUri = itemId ? `type-and-item?typeId=${typeId}&itemId=${itemId}` : `type?typeId=${typeId}`;
+			const dbItemPhotos = await api.get(`itemphotos/${navigationUri}`);
 
 			if (!dbItemPhotos) {
 				return;
 			}
-
-			state.itemPhotos = state.itemPhotos.concat(dbItemPhotos);
+			
+			state.itemPhotos = dbItemPhotos;
 		}
 
 		onMounted(() => {
@@ -52,6 +53,7 @@ export default defineComponent({
 
 		return {
 			state,
+			fetchItemPhotos,
 		}
 
 	},

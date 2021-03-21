@@ -11,7 +11,7 @@ namespace BackendPhotoItemsApp.Dtos {
         public string FileName { get; set; }
 
         //public int? Position { get; set; }
-        //public string Alt { get; set; }
+        public string Alt { get; set; }
         //public DateTime CreatedAt { get; set; }
         //public DateTime? ModifiedAt { get; set; }
         //public bool? IsActive { get; set; }
