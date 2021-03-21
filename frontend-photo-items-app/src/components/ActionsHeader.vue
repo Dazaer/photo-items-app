@@ -1,60 +1,76 @@
 <template>
 
 	<div class="actions-header">
-		<div class="p-2">Amount of pictures: {{itemPhotos.length}}</div>
 
+		<div class="p-2">Amount of pictures: {{itemPhotos.length}}</div>
 		<div class="p-2 d-flex justify-content-center">
 
-			<div class="p-1">
-				<div>Ring</div>
+			<div class="row no-gutters">
+				<div class="p-1">
+					<div>Ring</div>
 
-				<select v-model="state.selectedItem" @change="itemChanged()">
-					<option
-						v-for="(item) in state.items"
-						:key="item.id"
-						:value="item">
-						{{ item.name }}
-					</option>
-				</select>
-			</div>
+					<select v-model="state.selectedItem" @change="itemChanged()">
+						<option
+							v-for="(item) in state.items"
+							:key="item.id"
+							:value="item">
+							{{ item.name }}
+						</option>
+					</select>
+				</div>
 
-			<div class="p-1">
-				<div>Metal</div>
+				<div class="p-1">
+					<div>Metal</div>
 
-				<select v-model="state.selectedMetal"
-					:disabled="state.selectedItem.id === 0">
-					<option
-						v-for="(metalType) in state.metalTypes"
-						:key="metalType.id"
-						:value="metalType">
-						{{ metalType.description }}
-					</option>
-				</select>
-			</div>
+					<select v-model="state.selectedMetal"
+						:disabled="state.selectedItem.id === 0">
+						<option
+							v-for="(metalType) in state.metalTypes"
+							:key="metalType.id"
+							:value="metalType">
+							{{ metalType.description }}
+						</option>
+					</select>
+				</div>
 
-			<div class="p-1">
-				<div>Shape</div>
+				<div class="p-1">
+					<div>Shape</div>
 
-				<select v-model="state.selectedShape"
-					:disabled="state.selectedItem.id === 0">
-					<option
-						v-for="(shapeType) in state.shapeTypes"
-						:key="shapeType.id"
-						:value="shapeType">
-						{{ shapeType.description }}
-					</option>
-				</select>
+					<select v-model="state.selectedShape"
+						:disabled="state.selectedItem.id === 0">
+						<option
+							v-for="(shapeType) in state.shapeTypes"
+							:key="shapeType.id"
+							:value="shapeType">
+							{{ shapeType.description }}
+						</option>
+					</select>
+				</div>
 			</div>
 		</div>
 
-		<div class="p-2">
-			<button
-				:disabled="state.selectedItem.id === 0"
-				class="btn btn-success"
-				@click="addItem()">
-				+ Add
-			</button>
+		<div class="row no-gutters add-container">
+
+			<div class="p-1">
+				<a href="https://imgur.com/upload" target="_blank" class="small row no-gutters">
+					Please use imgur to guarantee a working url
+				</a>
+
+				<input :disabled="!canAdd" type="text" v-model="state.imageUrl" placeholder="Your url..." :class="state.imageUrl.length > 50 ? 'bg-danger' : ''">
+
+				<div v-if="state.imageUrl.length > 50">Url too long! (Max 50)</div>
+			</div>
+
+			<div class="p-2">
+				<button
+					:disabled="!canAdd"
+					class="btn btn-success"
+					@click="addItem()">
+					+ Add
+				</button>
+			</div>
 		</div>
+
 	</div>
 
 </template>
@@ -91,6 +107,15 @@ export default defineComponent({
 			items: Array<Item>(),
 			metalTypes: Array<PropertyType<MetalType>>(),
 			shapeTypes: Array<PropertyType<ShapeType>>(),
+			imageUrl: "i.imgur.com/sTTooHf.jpg",
+		});
+
+		const canAdd = computed(() => {
+			const isItemSelected: boolean = state.selectedItem.id !== 0;
+			const isMetalSelected: boolean = state.selectedMetal.id !== 0;
+			const isShapeSelected: boolean = state.selectedShape.id !== 0;
+
+			return isItemSelected && isMetalSelected && isShapeSelected;
 		});
 
 		function itemChanged () {
@@ -98,6 +123,10 @@ export default defineComponent({
 		}
 
 		async function addItem () {
+
+			if (state.imageUrl.length > 50) {
+				return;
+			}
 
 			const itemPhoto: ItemPhoto = new ItemPhoto({
 				itemId: state.selectedItem.id,
@@ -156,6 +185,7 @@ export default defineComponent({
 
 		return {
 			state,
+			canAdd,
 			addItem,
 			itemChanged,
 		}
