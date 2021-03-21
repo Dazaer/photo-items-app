@@ -1,7 +1,7 @@
 <template>
 
 	<div class="actions-header">
-		<div class="p-2">Amount: 0</div>
+		<div class="p-2">Amount: {{state.items.length - 1}}</div>
 
 		<div class="p-2 d-flex justify-content-center">
 
@@ -52,6 +52,7 @@
 import { defineComponent, onMounted, reactive } from "vue";
 import api from "@/utilities/api";
 import Item from "@/models/Item";
+import Property from "@/models/Property";
 
 export default defineComponent({
 	name: "ActionsHeader",
@@ -59,8 +60,8 @@ export default defineComponent({
 	setup (props, ctx) {
 
 		const state = reactive({
-			selectedShape: "",
-			selectedMetalType: "",
+			selectedShape: Property.getNullSelectedProperty(),
+			selectedMetalType: Property.getNullSelectedProperty(),
 			selectedItem: Item.getNullSelectedItem(),
 			items: Array<Item>(),
 		});
