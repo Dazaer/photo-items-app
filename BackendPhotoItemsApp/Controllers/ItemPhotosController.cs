@@ -81,7 +81,7 @@ namespace BackendPhotoItemsApp.Controllers {
                 return NotFound();
             }
 
-            _itemPhotoRepository.Remove(existingItemPhoto);
+            _itemPhotoRepository.RemoveWithPropertySet(existingItemPhoto);
             _itemPhotoRepository.SaveChanges();
 
             return NoContent();

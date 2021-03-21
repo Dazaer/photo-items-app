@@ -9,5 +9,6 @@ namespace BackendPhotoItemsApp.Repositories {
         IQueryable<ItemPhoto> GetAllWithProperties();
         IQueryable<ItemPhoto> GetAllByType(int typeId);
         IQueryable<ItemPhoto> GetAllByItem(int itemId);
+        void RemoveWithPropertySet(ItemPhoto entity);
     }
 }

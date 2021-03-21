@@ -26,5 +26,10 @@ namespace BackendPhotoItemsApp.Repositories {
                 .Where(itemPhoto => itemPhoto.TypeId == typeId);
         }
 
+        public void RemoveWithPropertySet(ItemPhoto itemPhoto) {
+            IQueryable<ItemPhotoPropertySet> set = _context.ItemPhotoPropertySets.Where(set => set.ItemPhotoId == itemPhoto.Id);
+            _context.RemoveRange(set);
+            _context.Remove(itemPhoto);
+        }
     }
 }
