@@ -56,17 +56,6 @@ namespace BackendPhotoItemsApp.Controllers {
             return Ok(_mapper.Map<IEnumerable<ItemPhotoDto>>(intersection));
         }
 
-        [Route("{id}/property")]
-        [HttpGet]
-        public ActionResult GetItemPhotosByProperties([FromQuery] string metalValue, [FromQuery] string shapeValue) {
-            IQueryable<ItemPhoto> itemPhotosByMetal = _itemPhotoRepository.GetAllByMetalType(metalValue);
-            IQueryable<ItemPhoto> itemPhotosByShape = _itemPhotoRepository.GetAllByShape(shapeValue);
-
-            var intersection = itemPhotosByMetal.Intersect(itemPhotosByShape);
-
-            return Ok(intersection);
-        }
-
         [HttpPost]
         public ActionResult<ItemPhotoDto> PostItemPhoto(ItemPhoto itemPhoto) {
 

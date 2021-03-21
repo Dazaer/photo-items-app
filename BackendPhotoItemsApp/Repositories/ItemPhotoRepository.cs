@@ -26,18 +26,5 @@ namespace BackendPhotoItemsApp.Repositories {
                 .Where(itemPhoto => itemPhoto.TypeId == typeId);
         }
 
-        public IQueryable<ItemPhoto> GetAllByMetalType(string value) {
-            IQueryable<ItemPhotoPropertySet> set = _context.ItemPhotoPropertySets.Where(set => set.PropertyId == 1 && set.Value == value);
-            IQueryable<ItemPhoto> photos = _context.ItemPhotos.Where(itemPhoto => set.Any(set => set.ItemPhotoId == itemPhoto.Id));
-
-            return photos;
-        }
-
-        public IQueryable<ItemPhoto> GetAllByShape(string value) {
-            IQueryable<ItemPhotoPropertySet> set = _context.ItemPhotoPropertySets.Where(set => set.PropertyId == 2 && set.Value == value);
-            IQueryable<ItemPhoto> photos = _context.ItemPhotos.Where(itemPhoto => set.Any(set => set.ItemPhotoId == itemPhoto.Id));
-
-            return photos;
-        }
     }
 }

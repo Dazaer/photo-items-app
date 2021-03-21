@@ -9,7 +9,5 @@ namespace BackendPhotoItemsApp.Repositories {
         IQueryable<ItemPhoto> GetAllWithProperties();
         IQueryable<ItemPhoto> GetAllByType(int typeId);
         IQueryable<ItemPhoto> GetAllByItem(int itemId);
-        IQueryable<ItemPhoto> GetAllByMetalType(string value);
-        IQueryable<ItemPhoto> GetAllByShape(string value);
     }
 }
