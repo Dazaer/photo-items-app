@@ -2,10 +2,10 @@
 	<div class="home-container">
 		<h1 class="title m-0 p-2" style="height: 7%">The Rings Collection</h1>
 
-		<actions-header @refresh-photos="fetchItemPhotos" :item-photos="state.itemPhotos" style="height: 10%" />
+		<actions-header v-if="finishedFetching" @photos-filtered="applyFilter" @refresh-photos="fetchPhotos" :item-photos="state.itemPhotos" style="height: 10%" />
 
 		<div class="items-container py-2" style="height: 80%">
-			<photos-container :item-photos="state.itemPhotos" />
+			<photos-container :item-photos="state.filteredPhotos" />
 		</div>
 
 		<footer class="footer" style="height: 3%">
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive } from "vue";
+import { defineComponent, onMounted, reactive, ref } from "vue";
 import ActionsHeader from "@/components/ActionsHeader.vue";
 import PhotosContainer from "@/components/PhotosContainer.vue";
 import ItemPhoto from "@/models/ItemPhoto";
@@ -32,28 +32,40 @@ export default defineComponent({
 
 	setup () {
 
+		let finishedFetching = ref(false);
+
 		const state = reactive({
 			itemPhotos: Array<ItemPhoto>(),
+			filteredPhotos: Array<ItemPhoto>(),
 		});
 
-		async function fetchItemPhotos (typeId: number = 1, itemId?: number) {
-			const navigationUri = itemId ? `type-and-item?typeId=${typeId}&itemId=${itemId}` : `type?typeId=${typeId}`;
-			const dbItemPhotos = await api.get(`itemphotos/${navigationUri}`);
+		async function fetchPhotos (typeId: number = 1) {
+			const dbItemPhotos: ItemPhoto[] = await api.get(`itemphotos`);
 
 			if (!dbItemPhotos) {
 				return;
 			}
-			
-			state.itemPhotos = dbItemPhotos;
+
+			const filteredItemPhotos = dbItemPhotos.filter(itemPhoto => itemPhoto.typeId == typeId);
+
+			state.itemPhotos = filteredItemPhotos;
+			state.filteredPhotos = state.itemPhotos;
+			finishedFetching.value = true;
+		}
+
+		function applyFilter(photos: ItemPhoto[]) {
+			state.filteredPhotos = photos;
 		}
 
 		onMounted(() => {
-			fetchItemPhotos();
+			fetchPhotos();
 		});
 
 		return {
 			state,
-			fetchItemPhotos,
+			fetchPhotos,
+			applyFilter,
+			finishedFetching,
 		}
 
 	},

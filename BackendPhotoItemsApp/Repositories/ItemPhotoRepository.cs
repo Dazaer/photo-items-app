@@ -10,6 +10,10 @@ namespace BackendPhotoItemsApp.Repositories {
         public ItemPhotoRepository(AppDbContext context) : base(context) {
         }
 
+        public IQueryable<ItemPhoto> GetAllWithProperties() {
+            return _context.ItemPhotos
+                .Include(itemPhoto => itemPhoto.ItemPhotoPropertySets);
+        }
         public IQueryable<ItemPhoto> GetAllByItem(int itemId) {
             return _context.ItemPhotos
                 .Include(itemPhoto => itemPhoto.Item)
@@ -20,6 +24,20 @@ namespace BackendPhotoItemsApp.Repositories {
             return _context.ItemPhotos
                 .Include(itemPhoto => itemPhoto.Type)
                 .Where(itemPhoto => itemPhoto.TypeId == typeId);
+        }
+
+        public IQueryable<ItemPhoto> GetAllByMetalType(string value) {
+            IQueryable<ItemPhotoPropertySet> set = _context.ItemPhotoPropertySets.Where(set => set.PropertyId == 1 && set.Value == value);
+            IQueryable<ItemPhoto> photos = _context.ItemPhotos.Where(itemPhoto => set.Any(set => set.ItemPhotoId == itemPhoto.Id));
+
+            return photos;
+        }
+
+        public IQueryable<ItemPhoto> GetAllByShape(string value) {
+            IQueryable<ItemPhotoPropertySet> set = _context.ItemPhotoPropertySets.Where(set => set.PropertyId == 2 && set.Value == value);
+            IQueryable<ItemPhoto> photos = _context.ItemPhotos.Where(itemPhoto => set.Any(set => set.ItemPhotoId == itemPhoto.Id));
+
+            return photos;
         }
     }
 }

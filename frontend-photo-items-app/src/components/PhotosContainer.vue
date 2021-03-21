@@ -43,15 +43,15 @@ export default defineComponent({
 	height: 100%;
 	padding: 1em;
 	overflow-y: scroll;
-	grid-template-columns: repeat(8, 1fr);
-	grid-template-rows: repeat(auto-fill, 20vh);
+	grid-template-columns: repeat(6, 1fr);
+	grid-template-rows: repeat(auto-fill, 30vh);
 	grid-column-gap: 1em;
 	grid-row-gap: 1em;
 	background-color: #adadc8;
 
 	.item-photo {
 		@include center;
-		height: 20vh;
+		height: 30vh;
 		box-shadow: 0px 10px 10px 1px rgba(0, 0, 0, 0.78);
 		border-radius: 10px 10px 10px 10px;
 		padding: 1em;

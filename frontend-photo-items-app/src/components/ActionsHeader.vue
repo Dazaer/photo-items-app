@@ -2,14 +2,14 @@
 
 	<div class="actions-header">
 
-		<div class="p-2">Amount of pictures: {{itemPhotos.length}}</div>
+		<div class="p-2">Amount of pictures: {{state.filteredPhotos.length}}</div>
 		<div class="p-2 d-flex justify-content-center">
 
 			<div class="row no-gutters">
 				<div class="p-1">
 					<div>Ring</div>
 
-					<select v-model="state.selectedItem" @change="itemChanged()">
+					<select v-model="state.selectedItem" @change="changeFilter()">
 						<option
 							v-for="(item) in state.items"
 							:key="item.id"
@@ -22,8 +22,7 @@
 				<div class="p-1">
 					<div>Metal</div>
 
-					<select v-model="state.selectedMetal"
-						:disabled="state.selectedItem.id === 0">
+					<select v-model="state.selectedMetal" @change="changeFilter()">
 						<option
 							v-for="(metalType) in state.metalTypes"
 							:key="metalType.id"
@@ -36,8 +35,7 @@
 				<div class="p-1">
 					<div>Shape</div>
 
-					<select v-model="state.selectedShape"
-						:disabled="state.selectedItem.id === 0">
+					<select v-model="state.selectedShape" @change="changeFilter()">
 						<option
 							v-for="(shapeType) in state.shapeTypes"
 							:key="shapeType.id"
@@ -53,10 +51,12 @@
 
 			<div class="p-1">
 				<a href="https://imgur.com/upload" target="_blank" class="small row no-gutters">
-					Please use imgur to guarantee a working url
+					Please use imgur to guarantee a working url<br>
+					(right click "view image" once uplodaded)
 				</a>
 
-				<input :disabled="!canAdd" type="text" v-model="state.imageUrl" placeholder="Your url..." :class="state.imageUrl.length > 50 ? 'bg-danger' : ''">
+				<input :disabled="!canAdd" type="text" v-model="state.imageUrl" placeholder="Your url..."
+					:class="state.imageUrl.length > 50 ? 'bg-danger' : ''">
 
 				<div v-if="state.imageUrl.length > 50">Url too long! (Max 50)</div>
 			</div>
@@ -101,13 +101,14 @@ export default defineComponent({
 	setup (props, ctx) {
 
 		const state = reactive({
+			filteredPhotos: props.itemPhotos,
 			selectedItem: Item.getNullSelectedItem(),
 			selectedMetal: Property.getNullSelectedPropertyType<MetalType>(),
 			selectedShape: Property.getNullSelectedPropertyType<ShapeType>(),
 			items: Array<Item>(),
 			metalTypes: Array<PropertyType<MetalType>>(),
 			shapeTypes: Array<PropertyType<ShapeType>>(),
-			imageUrl: "i.imgur.com/sTTooHf.jpg",
+			imageUrl: "https://i.imgur.com/sTTooHf.jpg",
 		});
 
 		const canAdd = computed(() => {
@@ -115,11 +116,41 @@ export default defineComponent({
 			const isMetalSelected: boolean = state.selectedMetal.id !== 0;
 			const isShapeSelected: boolean = state.selectedShape.id !== 0;
 
-			return isItemSelected && isMetalSelected && isShapeSelected;
+			return isItemSelected && isMetalSelected && isShapeSelected && state.imageUrl.length > 0;
 		});
 
-		function itemChanged () {
-			ctx.emit("refresh-photos", 1, state.selectedItem.id);
+		function changeFilter () {
+			state.filteredPhotos = props.itemPhotos;
+
+			//Filter by item
+			if (state.selectedItem.id > 0) {
+				state.filteredPhotos = state.filteredPhotos.filter(photo => photo.itemId == state.selectedItem.id);
+			}
+
+			//Filter by metal
+			if (state.selectedMetal.id > 0) {
+				state.filteredPhotos = state.filteredPhotos.filter(photo => {
+					const property: ItemPhotoPropertySet = photo.itemPhotoPropertySets.find(property => property.propertyId == new Metal().id) ?? new ItemPhotoPropertySet();
+
+					let filtered = property.value === state.selectedMetal.description
+
+					return filtered;
+				});
+			}
+
+			//Filter by shape
+			if (state.selectedShape.id > 0) {
+				state.filteredPhotos = state.filteredPhotos.filter(photo => {
+					const property: ItemPhotoPropertySet = photo.itemPhotoPropertySets.find(property => property.propertyId == new Shape().id) ?? new ItemPhotoPropertySet();
+
+					let filtered = property.value === state.selectedShape.description
+
+					return filtered;
+				});
+			}
+
+			ctx.emit("photos-filtered", state.filteredPhotos);
+
 		}
 
 		async function addItem () {
@@ -131,8 +162,7 @@ export default defineComponent({
 			const itemPhoto: ItemPhoto = new ItemPhoto({
 				itemId: state.selectedItem.id,
 				typeId: 1,
-				fileName: "https://i.imgur.com/FbahS46.png",
-				alt: "Platinum cushion ring",
+				fileName: state.imageUrl,
 			});
 			const postedItemPhoto: ItemPhoto = await api.post("itemphotos", itemPhoto);
 
@@ -178,6 +208,7 @@ export default defineComponent({
 		}
 
 		onMounted(() => {
+			state.filteredPhotos = props.itemPhotos;
 			fetchItems();
 			fetchMetalTypes();
 			fetchShapeTypes();
@@ -187,7 +218,7 @@ export default defineComponent({
 			state,
 			canAdd,
 			addItem,
-			itemChanged,
+			changeFilter,
 		}
 
 	},

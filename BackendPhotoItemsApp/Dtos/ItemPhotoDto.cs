@@ -18,6 +18,6 @@ namespace BackendPhotoItemsApp.Dtos {
 
         public virtual Item Item { get; set; }
         public virtual Models.Type Type { get; set; }
-        //public virtual ICollection<ItemPhotoPropertySet> ItemPhotoPropertySets { get; set; }
+        public virtual ICollection<ItemPhotoPropertySet> ItemPhotoPropertySets { get; set; }
     }
 }

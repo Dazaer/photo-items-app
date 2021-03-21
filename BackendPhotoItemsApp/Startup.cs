@@ -42,6 +42,7 @@ namespace BackendPhotoItemsApp {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IItemPhotoRepository, ItemPhotoRepository>();
+            services.AddScoped<IItemPhotoPropertySetRepository, ItemPhotoPropertySetRepository>();
 
         }
 

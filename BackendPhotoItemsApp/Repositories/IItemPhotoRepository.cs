@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace BackendPhotoItemsApp.Repositories {
     public interface IItemPhotoRepository : IRepository<ItemPhoto> {
+        IQueryable<ItemPhoto> GetAllWithProperties();
         IQueryable<ItemPhoto> GetAllByType(int typeId);
         IQueryable<ItemPhoto> GetAllByItem(int itemId);
+        IQueryable<ItemPhoto> GetAllByMetalType(string value);
+        IQueryable<ItemPhoto> GetAllByShape(string value);
     }
 }

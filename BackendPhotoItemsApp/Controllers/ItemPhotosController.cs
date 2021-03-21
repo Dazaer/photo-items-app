@@ -21,6 +21,13 @@ namespace BackendPhotoItemsApp.Controllers {
             _mapper = mapper;
         }
 
+        [HttpGet]
+        public ActionResult GetAllItemPhotos() {
+
+            IQueryable<ItemPhoto> itemPhotos = _itemPhotoRepository.GetAllWithProperties();
+            return Ok(_mapper.Map<IEnumerable<ItemPhotoDto>>(itemPhotos));
+        }
+
         [Route("{id}")]
         [HttpGet]
         public ActionResult GetItemPhoto(int id) {
@@ -44,6 +51,10 @@ namespace BackendPhotoItemsApp.Controllers {
             IEnumerable<ItemPhoto> itemPhotosByType = _itemPhotoRepository.GetAllByType(typeId);
             IEnumerable<ItemPhoto> itemPhotosByItem = _itemPhotoRepository.GetAllByItem(itemId);
 
+            var intersection = itemPhotosByType.Intersect(itemPhotosByItem);
+
+            /*
+            //https://stackoverflow.com/a/419357/11747650
             var countsOfPhotosByType = itemPhotosByType.GroupBy(itemPhoto => itemPhoto).ToDictionary(itemPhoto => itemPhoto.Key, itemPhoto => itemPhoto.Count());
 
             IList<ItemPhoto> matched = new List<ItemPhoto>();
@@ -66,8 +77,20 @@ namespace BackendPhotoItemsApp.Controllers {
                         countsOfPhotosByType.Remove(itemPhoto);
                 }
             }
+            */
 
-            return Ok(_mapper.Map<IEnumerable<ItemPhotoDto>>(matched));
+            return Ok(_mapper.Map<IEnumerable<ItemPhotoDto>>(intersection));
+        }
+
+        [Route("{id}/property")]
+        [HttpGet]
+        public ActionResult GetItemPhotosByProperties([FromQuery] string metalValue, [FromQuery] string shapeValue) {
+            IQueryable<ItemPhoto> itemPhotosByMetal = _itemPhotoRepository.GetAllByMetalType(metalValue);
+            IQueryable<ItemPhoto> itemPhotosByShape = _itemPhotoRepository.GetAllByShape(shapeValue);
+
+            var intersection = itemPhotosByMetal.Intersect(itemPhotosByShape);
+
+            return Ok(intersection);
         }
 
         [HttpPost]
@@ -86,6 +109,8 @@ namespace BackendPhotoItemsApp.Controllers {
             var itemPhotoDto = _mapper.Map<ItemPhotoDto>(itemPhotoModel);
             return CreatedAtAction(nameof(GetItemPhoto), new { itemPhotoDto.Id }, itemPhotoDto);
         }
+
+
 
     }
 }

@@ -7,4 +7,6 @@ using System.Threading.Tasks;
 namespace BackendPhotoItemsApp.Repositories {
     interface IItemPhotoPropertySetRepository : IRepository<ItemPhotoPropertySet>{
     }
+
+
 }
