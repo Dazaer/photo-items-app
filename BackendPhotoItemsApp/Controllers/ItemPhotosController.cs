@@ -53,32 +53,6 @@ namespace BackendPhotoItemsApp.Controllers {
 
             var intersection = itemPhotosByType.Intersect(itemPhotosByItem);
 
-            /*
-            //https://stackoverflow.com/a/419357/11747650
-            var countsOfPhotosByType = itemPhotosByType.GroupBy(itemPhoto => itemPhoto).ToDictionary(itemPhoto => itemPhoto.Key, itemPhoto => itemPhoto.Count());
-
-            IList<ItemPhoto> matched = new List<ItemPhoto>();
-
-            foreach (ItemPhoto itemPhoto in itemPhotosByItem) {
-                // The count.
-                int count;
-
-                // If the item is found in a.
-                if (countsOfPhotosByType.TryGetValue(itemPhoto, out count)) {
-                    // This is positive.
-                    Debug.Assert(count > 0);
-
-                    // Add the item to the list.
-                    matched.Add(itemPhoto);
-
-                    // Decrement the count.  If
-                    // 0, remove.
-                    if (--count == 0)
-                        countsOfPhotosByType.Remove(itemPhoto);
-                }
-            }
-            */
-
             return Ok(_mapper.Map<IEnumerable<ItemPhotoDto>>(intersection));
         }
 
@@ -110,7 +84,19 @@ namespace BackendPhotoItemsApp.Controllers {
             return CreatedAtAction(nameof(GetItemPhoto), new { itemPhotoDto.Id }, itemPhotoDto);
         }
 
+        [HttpDelete("{id}")]
+        public ActionResult DeleteItemPhoto(int id) {
+            ItemPhoto existingItemPhoto = _itemPhotoRepository.Get(id);
 
+            if (existingItemPhoto == null) {
+                return NotFound();
+            }
+
+            _itemPhotoRepository.Remove(existingItemPhoto);
+            _itemPhotoRepository.SaveChanges();
+
+            return NoContent();
+        }
 
     }
 }

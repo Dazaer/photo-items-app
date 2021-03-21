@@ -2,10 +2,16 @@
 	<div class="home-container">
 		<h1 class="title m-0 p-2" style="height: 7%">The Rings Collection</h1>
 
-		<actions-header v-if="finishedFetching" @photos-filtered="applyFilter" @refresh-photos="fetchPhotos" :item-photos="state.itemPhotos" style="height: 10%" />
+		<actions-header
+			ref="actionsHeaderRef"
+			v-if="finishedFetching"
+			@photos-filtered="applyFilter"
+			@refresh-photos="refreshPhotos"
+			:item-photos="state.itemPhotos"
+			style="height: 10%" />
 
 		<div class="items-container py-2" style="height: 80%">
-			<photos-container :item-photos="state.filteredPhotos" />
+			<photos-container @refresh-photos="refreshPhotos" :item-photos="state.filteredPhotos" />
 		</div>
 
 		<footer class="footer" style="height: 3%">
@@ -39,6 +45,8 @@ export default defineComponent({
 			filteredPhotos: Array<ItemPhoto>(),
 		});
 
+		const actionsHeaderRef = ref();
+
 		async function fetchPhotos (typeId: number = 1) {
 			const dbItemPhotos: ItemPhoto[] = await api.get(`itemphotos`);
 
@@ -53,8 +61,13 @@ export default defineComponent({
 			finishedFetching.value = true;
 		}
 
-		function applyFilter(photos: ItemPhoto[]) {
+		function applyFilter (photos: ItemPhoto[]) {
 			state.filteredPhotos = photos;
+		}
+
+		async function refreshPhotos() {
+			await fetchPhotos();
+			actionsHeaderRef.value.resetState();
 		}
 
 		onMounted(() => {
@@ -66,6 +79,8 @@ export default defineComponent({
 			fetchPhotos,
 			applyFilter,
 			finishedFetching,
+			actionsHeaderRef,
+			refreshPhotos,
 		}
 
 	},

@@ -33,6 +33,19 @@ import axios from "axios";
     }
   }
 
+  public async delete(endpoint: string) {
+    try {
+      const response = await axios.delete(this.url + endpoint)
+
+      const results = response.data;
+      return results;
+    } catch (err) {
+      if (err.response) {
+        console.log("Error:", err);
+      }
+    }
+  }
+
   
 }
 

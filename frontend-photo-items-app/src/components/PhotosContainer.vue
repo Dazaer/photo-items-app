@@ -2,7 +2,8 @@
 	<div class="photos-container">
 
 		<div v-for="(itemPhoto) in itemPhotos" :key="itemPhoto.id" class="item-photo">
-			<img :src="itemPhoto.fileName" :alt="itemPhoto.alt ?? 'Photo not available'" class="image">
+				<button class="floating-button btn btn-danger" @click="removePhoto(itemPhoto)">x</button>
+				<img :src="itemPhoto.fileName" :alt="itemPhoto.alt ?? 'Photo not available'" class="image">
 		</div>
 
 	</div>
@@ -10,26 +11,32 @@
 
 <script lang="ts">
 import ItemPhoto from "@/models/ItemPhoto";
+import api from "@/utilities/api";
 import { defineComponent, PropType, reactive } from "vue";
 
 export default defineComponent({
 	name: "PhotosContainer",
 
-  props: {
+	props: {
 		itemPhotos: {
 			type: Array as PropType<Array<ItemPhoto>>,
 			required: true,
 		}
-  },
+	},
 
 	setup (props, ctx) {
 
 		const state = reactive({
 		});
 
+		async function removePhoto(itemPhoto: ItemPhoto) {
+			await api.delete(`itemphotos/${itemPhoto.id}`)
+			ctx.emit("refresh-photos");
+		}
 
 		return {
 			state,
+			removePhoto,
 		}
 
 	},
@@ -37,7 +44,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
 .photos-container {
 	display: grid;
 	height: 100%;
@@ -51,6 +57,7 @@ export default defineComponent({
 
 	.item-photo {
 		@include center;
+		position:relative;
 		height: 30vh;
 		box-shadow: 0px 10px 10px 1px rgba(0, 0, 0, 0.78);
 		border-radius: 10px 10px 10px 10px;
@@ -64,5 +71,10 @@ export default defineComponent({
 		}
 	}
 
+	.floating-button {
+		position: absolute;
+		top: 3%;
+		right: 3%;
+	}
 }
 </style>

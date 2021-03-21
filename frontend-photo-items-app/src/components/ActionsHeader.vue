@@ -105,10 +105,10 @@ export default defineComponent({
 			selectedItem: Item.getNullSelectedItem(),
 			selectedMetal: Property.getNullSelectedPropertyType<MetalType>(),
 			selectedShape: Property.getNullSelectedPropertyType<ShapeType>(),
+			imageUrl: "https://i.imgur.com/sTTooHf.jpg",
 			items: Array<Item>(),
 			metalTypes: Array<PropertyType<MetalType>>(),
 			shapeTypes: Array<PropertyType<ShapeType>>(),
-			imageUrl: "https://i.imgur.com/sTTooHf.jpg",
 		});
 
 		const canAdd = computed(() => {
@@ -116,7 +116,7 @@ export default defineComponent({
 			const isMetalSelected: boolean = state.selectedMetal.id !== 0;
 			const isShapeSelected: boolean = state.selectedShape.id !== 0;
 
-			return isItemSelected && isMetalSelected && isShapeSelected && state.imageUrl.length > 0;
+			return isItemSelected && isMetalSelected && isShapeSelected;
 		});
 
 		function changeFilter () {
@@ -153,6 +153,14 @@ export default defineComponent({
 
 		}
 
+		function resetState() {
+			state.filteredPhotos = props.itemPhotos;
+			state.selectedShape = Property.getNullSelectedPropertyType<ShapeType>();
+			state.selectedMetal = Property.getNullSelectedPropertyType<MetalType>();
+			state.selectedItem = Item.getNullSelectedItem();
+			state.imageUrl = "";
+		}
+
 		async function addItem () {
 
 			if (state.imageUrl.length > 50) {
@@ -179,6 +187,7 @@ export default defineComponent({
 				value: state.selectedShape.description
 			});
 			api.post("itemphotopropertysets", itemPhotoShapeSet);
+			resetState();
 
 			ctx.emit("refresh-photos");
 		}
@@ -219,6 +228,7 @@ export default defineComponent({
 			canAdd,
 			addItem,
 			changeFilter,
+			resetState,
 		}
 
 	},
