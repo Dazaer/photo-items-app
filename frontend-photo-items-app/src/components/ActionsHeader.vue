@@ -21,7 +21,8 @@
 			<div class="p-1">
 				<div>Metal</div>
 
-				<select v-model="state.selectedMetalType">
+				<select v-model="state.selectedMetalType"
+					:disabled="state.selectedItem.id === 0">
 					<option value="Rose gold">Rose gold</option>
 					<option value="Yellow gold">Yellow gold</option>
 				</select>
@@ -30,7 +31,8 @@
 			<div class="p-1">
 				<div>Shape</div>
 
-				<select v-model="state.selectedShape">
+				<select v-model="state.selectedShape"
+					:disabled="state.selectedItem.id === 0">
 					<option value="Cushion">Cushion</option>
 					<option value="Round">Round</option>
 				</select>
@@ -39,6 +41,7 @@
 
 		<div class="p-2">
 			<button
+				:disabled="state.selectedItem.id === 0"
 				class="btn btn-success"
 				@click="addItem()">
 				+ Add
@@ -78,9 +81,9 @@ export default defineComponent({
 
 			const dbItems = await api.get("items");
 
-      if (!dbItems) {
-        return;
-      }
+			if (!dbItems) {
+				return;
+			}
 
 			state.items = state.items.concat(dbItems);
 		}
