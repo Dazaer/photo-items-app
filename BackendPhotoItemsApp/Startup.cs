@@ -34,6 +34,8 @@ namespace BackendPhotoItemsApp {
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IItemPhotoRepository, ItemPhotoRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
