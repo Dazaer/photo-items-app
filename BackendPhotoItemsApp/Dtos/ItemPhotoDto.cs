@@ -16,8 +16,8 @@ namespace BackendPhotoItemsApp.Dtos {
         //public DateTime? ModifiedAt { get; set; }
         //public bool? IsActive { get; set; }
 
-        //public virtual Item Item { get; set; }
-        //public virtual Models.Type Type { get; set; }
+        public virtual Item Item { get; set; }
+        public virtual Models.Type Type { get; set; }
         //public virtual ICollection<ItemPhotoPropertySet> ItemPhotoPropertySets { get; set; }
     }
 }

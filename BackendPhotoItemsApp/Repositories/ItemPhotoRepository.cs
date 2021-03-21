@@ -1,4 +1,5 @@
 ﻿using BackendPhotoItemsApp.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,15 @@ namespace BackendPhotoItemsApp.Repositories {
         }
 
         public IQueryable<ItemPhoto> GetAllByItem(int itemId) {
-            return _context.ItemPhotos.Where(itemPhoto => itemPhoto.ItemId == itemId);
+            return _context.ItemPhotos
+                .Include(itemPhoto => itemPhoto.Item)
+                .Where(itemPhoto => itemPhoto.ItemId == itemId);
         }
 
         public IQueryable<ItemPhoto> GetAllByType(int typeId) {
-            return _context.ItemPhotos.Where(itemPhoto => itemPhoto.TypeId == typeId);
+            return _context.ItemPhotos
+                .Include(itemPhoto => itemPhoto.Type)
+                .Where(itemPhoto => itemPhoto.TypeId == typeId);
         }
     }
 }

@@ -10,8 +10,8 @@ namespace BackendPhotoItemsApp.Profiles {
     public class ItemsProfile : Profile {
         public ItemsProfile() {
             CreateMap<Item, ItemDto>();
-            CreateMap<ItemPostDto, Item>();
-            CreateMap<Item, ItemPostDto>();
+            //CreateMap<ItemPostDto, Item>();
+            CreateMap<Item, ItemPostDto>().ReverseMap();
         }
     }
 }
