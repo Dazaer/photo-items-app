@@ -1,7 +1,7 @@
 <template>
 
 	<div class="actions-header">
-		<div class="p-2">Amount: {{state.items.length - 1}}</div>
+		<div class="p-2">Amount of pictures: {{state.itemPhotos.length}}</div>
 
 		<div class="p-2 d-flex justify-content-center">
 
@@ -21,7 +21,7 @@
 			<div class="p-1">
 				<div>Metal</div>
 
-				<select v-model="state.selectedMetalType"
+				<select v-model="state.selectedMetal"
 					:disabled="state.selectedItem.id === 0">
 					<option value="Rose gold">Rose gold</option>
 					<option value="Yellow gold">Yellow gold</option>
@@ -52,9 +52,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive } from "vue";
+import { computed, defineComponent, onMounted, reactive } from "vue";
 import api from "@/utilities/api";
 import Item from "@/models/Item";
+import ItemPhoto from "@/models/ItemPhoto";
 import Property from "@/models/Property";
 
 export default defineComponent({
@@ -63,11 +64,14 @@ export default defineComponent({
 	setup (props, ctx) {
 
 		const state = reactive({
-			selectedShape: Property.getNullSelectedProperty(),
-			selectedMetalType: Property.getNullSelectedProperty(),
 			selectedItem: Item.getNullSelectedItem(),
+			selectedMetal: Property.getNullSelectedProperty(),
+			selectedShape: Property.getNullSelectedProperty(),
 			items: Array<Item>(),
+      itemPhotos: Array<ItemPhoto>(),
 		});
+
+    const itemPhotos = computed(() => state.itemPhotos);
 
 		function addItem () {
 
@@ -77,7 +81,7 @@ export default defineComponent({
 
 
 		async function fetchItems () {
-			state.items.push(Item.getNullSelectedItem());
+			state.items.push(state.selectedItem);
 
 			const dbItems = await api.get("items");
 
@@ -87,9 +91,19 @@ export default defineComponent({
 
 			state.items = state.items.concat(dbItems);
 		}
+    async function fetchItemPhotos(typeId: number = 1, itemId?: number) {
+			const dbItemPhotos = await api.get(`itemphotos?typeId=${typeId}&itemId=${itemId}`);
+
+			if (!dbItemPhotos) {
+				return;
+			}
+
+			state.itemPhotos = state.itemPhotos.concat(dbItemPhotos);
+    }
 
 		onMounted(() => {
 			fetchItems();
+      fetchItemPhotos();
 		});
 
 		return {
