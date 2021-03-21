@@ -70,6 +70,7 @@ import Shape from "@/models/virtual/Shape";
 import MetalType from "@/models/virtual/MetalType";
 import ShapeType from "@/models/virtual/ShapeType";
 import PropertyType from "@/models/virtual/PropertyType";
+import ItemPhotoPropertySet from "@/models/ItemPhotoPropertySet";
 
 export default defineComponent({
 	name: "ActionsHeader",
@@ -93,13 +94,34 @@ export default defineComponent({
 		});
 
 		function itemChanged () {
-			ctx.emit("item-chosen", 1, state.selectedItem.id);
+			ctx.emit("refresh-photos", 1, state.selectedItem.id);
 		}
 
-		function addItem () {
+		async function addItem () {
 
-			console.log("added");
+			const itemPhoto: ItemPhoto = new ItemPhoto({
+				itemId: state.selectedItem.id,
+				typeId: 1,
+				fileName: "https://i.imgur.com/FbahS46.png",
+				alt: "Platinum cushion ring",
+			});
+			const postedItemPhoto: ItemPhoto = await api.post("itemphotos", itemPhoto);
 
+			const itemPhotoMetalSet: ItemPhotoPropertySet = new ItemPhotoPropertySet({
+				itemPhotoId: postedItemPhoto.id,
+				propertyId: new Metal().id,
+				value: state.selectedMetal.description
+			});
+			api.post("itemphotopropertysets", itemPhotoMetalSet);
+
+			const itemPhotoShapeSet: ItemPhotoPropertySet = new ItemPhotoPropertySet({
+				itemPhotoId: postedItemPhoto.id,
+				propertyId: new Shape().id,
+				value: state.selectedShape.description
+			});
+			api.post("itemphotopropertysets", itemPhotoShapeSet);
+
+			ctx.emit("refresh-photos");
 		}
 
 		async function fetchItems () {

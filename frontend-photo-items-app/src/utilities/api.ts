@@ -19,6 +19,20 @@ import axios from "axios";
       }
     }
   }
+
+  public async post(endpoint: string, data: object) {
+    try {
+      const response = await axios.post(this.url + endpoint, data)
+
+      const results = response.data;
+      return results;
+    } catch (err) {
+      if (err.response) {
+        console.log("Error:", err);
+      }
+    }
+  }
+
   
 }
 

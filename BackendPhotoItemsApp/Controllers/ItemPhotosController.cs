@@ -21,6 +21,14 @@ namespace BackendPhotoItemsApp.Controllers {
             _mapper = mapper;
         }
 
+        [Route("{id}")]
+        [HttpGet]
+        public ActionResult GetItemPhoto(int id) {
+
+            ItemPhoto itemPhoto = _itemPhotoRepository.Get(id);
+            return Ok(_mapper.Map<ItemPhotoDto>(itemPhoto));
+        }
+
         [Route("type")]
         [HttpGet]
         public ActionResult GetItemPhotosByType([FromQuery] int typeId) {
@@ -60,6 +68,23 @@ namespace BackendPhotoItemsApp.Controllers {
             }
 
             return Ok(_mapper.Map<IEnumerable<ItemPhotoDto>>(matched));
+        }
+
+        [HttpPost]
+        public ActionResult<ItemPhotoDto> PostItemPhoto(ItemPhoto itemPhoto) {
+
+            if (itemPhoto == null) {
+                return BadRequest();
+            }
+
+            ItemPhotoPostDto postedItemPhoto = _mapper.Map<ItemPhotoPostDto>(itemPhoto);
+            ItemPhoto itemPhotoModel = _mapper.Map<ItemPhoto>(postedItemPhoto);
+
+            _itemPhotoRepository.Add(itemPhotoModel);
+            _itemPhotoRepository.SaveChanges();
+
+            var itemPhotoDto = _mapper.Map<ItemPhotoDto>(itemPhotoModel);
+            return CreatedAtAction(nameof(GetItemPhoto), new { itemPhotoDto.Id }, itemPhotoDto);
         }
 
     }

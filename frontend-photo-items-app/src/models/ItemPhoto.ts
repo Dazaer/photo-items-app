@@ -15,9 +15,9 @@ export default class ItemPhoto {
   public isActive: boolean = true;
 
   //Navigations
-  public itemNavigation: Item = new Item();
-  public typeNavigation: Type = new Type();
-  public itemPhotoPropertySet: ItemPhotoPropertySet[] = [];
+  public item: Item = new Item();
+  public type: Type = new Type();
+  public itemPhotos: ItemPhotoPropertySet[] = [];
 
   constructor(itemPhoto?: Partial<ItemPhoto>) {
     Object.assign(this, itemPhoto);

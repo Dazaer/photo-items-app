@@ -2,7 +2,7 @@
 	<div class="home-container">
 		<h1 class="title m-0 p-2" style="height: 5%">Rings display</h1>
 
-		<actions-header @item-chosen="fetchItemPhotos" :item-photos="state.itemPhotos" style="height: 5%" />
+		<actions-header @refresh-photos="fetchItemPhotos" :item-photos="state.itemPhotos" style="height: 5%" />
 
 		<div class="items-container py-2" style="height: 87%">
 			<photos-container :item-photos="state.itemPhotos" />
