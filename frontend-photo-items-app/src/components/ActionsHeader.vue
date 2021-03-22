@@ -132,9 +132,9 @@ export default defineComponent({
 				state.filteredPhotos = state.filteredPhotos.filter(photo => {
 					const property: ItemPhotoPropertySet = photo.itemPhotoPropertySets.find(property => property.propertyId == new Metal().id) ?? new ItemPhotoPropertySet();
 
-					let filtered = property.value === state.selectedMetal.description
+					const valueMatches = property.value === state.selectedMetal.description
 
-					return filtered;
+					return valueMatches;
 				});
 			}
 
@@ -151,14 +151,6 @@ export default defineComponent({
 
 			ctx.emit("photos-filtered", state.filteredPhotos);
 
-		}
-
-		function resetState() {
-			state.filteredPhotos = props.itemPhotos;
-			state.selectedShape = Property.getNullSelectedPropertyType<ShapeType>();
-			state.selectedMetal = Property.getNullSelectedPropertyType<MetalType>();
-			state.selectedItem = Item.getNullSelectedItem();
-			state.imageUrl = "";
 		}
 
 		async function addItem () {
@@ -179,15 +171,15 @@ export default defineComponent({
 				propertyId: new Metal().id,
 				value: state.selectedMetal.description
 			});
-			api.post("itemphotopropertysets", itemPhotoMetalSet);
+			const addMetalSet =	api.post("itemphotopropertysets", itemPhotoMetalSet);
 
 			const itemPhotoShapeSet: ItemPhotoPropertySet = new ItemPhotoPropertySet({
 				itemPhotoId: postedItemPhoto.id,
 				propertyId: new Shape().id,
 				value: state.selectedShape.description
 			});
-			api.post("itemphotopropertysets", itemPhotoShapeSet);
-			resetState();
+			const addShapeSet = api.post("itemphotopropertysets", itemPhotoShapeSet);
+			await Promise.all([addMetalSet, addShapeSet]);
 
 			ctx.emit("refresh-photos");
 		}
@@ -214,6 +206,14 @@ export default defineComponent({
 			const shapeTypes = ShapeType.getShapeTypes();
 
 			state.shapeTypes = state.shapeTypes.concat(shapeTypes);
+		}
+
+		function resetState () {
+			state.filteredPhotos = props.itemPhotos;
+			state.selectedShape = Property.getNullSelectedPropertyType<ShapeType>();
+			state.selectedMetal = Property.getNullSelectedPropertyType<MetalType>();
+			state.selectedItem = Item.getNullSelectedItem();
+			state.imageUrl = "";
 		}
 
 		onMounted(() => {
